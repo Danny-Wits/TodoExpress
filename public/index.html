@@ -4,106 +4,376 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tasks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      * {
-        padding: 0px;
-        margin: 0px;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      /* Design system variables */
+      :root {
+        --bg-color: #fafafa;
+        --card-bg: #ffffff;
+        --card-border: #eaeaea;
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
+        --accent: #000000;
+        --accent-hover: #333333;
+        --success: #10b981;
+        --danger: #ef4444;
+        --danger-hover: #dc2626;
+        --radius: 12px;
       }
+
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      body {
+        background: var(--bg-color);
+        color: var(--text-primary);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 4rem 1rem;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .main {
+        width: 100%;
+        max-width: 540px;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 24px;
+        padding: 3rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 10px 15px -3px rgba(0, 0, 0, 0.02);
+        animation: fade-in 0.5s ease-out;
+      }
+
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      h2 {
+        text-align: left;
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        color: var(--text-primary);
+        letter-spacing: -0.03em;
+      }
+
+      .input-container {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 2.5rem;
+      }
+
+      input[type="text"] {
+        flex: 1;
+        background: #f9fafb;
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius);
+        padding: 0.875rem 1.25rem;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        background: #ffffff;
+        border-color: #d1d5db;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+      }
+
+      input[type="text"]::placeholder {
+        color: var(--text-secondary);
+      }
+
       button {
         border: none;
         outline: none;
-        padding: 5px 10px;
+        padding: 0.875rem 1.25rem;
+        border-radius: var(--radius);
+        font-size: 0.9375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      button:active {
+        transform: scale(0.97);
+      }
+
+      .btn-primary {
+        background: var(--accent);
         color: white;
-        background-color: black;
-        border-radius: 4px;
-        box-shadow: 2px 2px 2px red;
-        &:hover {
-          box-shadow: 2px 2px 2px lime;
-        }
       }
-      input {
-        border: none;
-        outline: none;
-        border: 1px dotted;
-        padding: 10px 2px;
+
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       }
-      .main {
+
+      .btn-secondary {
+        background: #ffffff;
+        color: var(--text-primary);
+        border: 1px solid var(--card-border);
+      }
+
+      .btn-secondary:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+      }
+
+      ul {
+        list-style: none;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        gap: 0.75rem;
+      }
+
+      .task-item {
+        background: #ffffff;
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius);
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        min-height: 100vh;
+        transition: all 0.2s ease;
+        animation: slide-up 0.4s ease-out forwards;
+        opacity: 0;
+      }
+
+      .task-item:hover {
+        border-color: #d1d5db;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      }
+
+      @keyframes slide-up {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .task-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .task-title {
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        transition: all 0.2s ease;
+      }
+
+      .status-badge {
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      .status-completed {
+        background: #ecfdf5;
+        color: #059669;
+        border: 1px solid #a7f3d0;
+      }
+
+      .status-pending {
+        background: #fefce8;
+        color: #ca8a04;
+        border: 1px solid #fef08a;
+      }
+
+      .task-actions {
+        display: flex;
+        gap: 0.375rem;
+      }
+
+      .btn-icon {
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .btn-update {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid transparent;
+      }
+
+      .btn-update:hover {
+        background: #f3f4f6;
+        color: var(--text-primary);
+      }
+
+      .btn-delete {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid transparent;
+      }
+
+      .btn-delete:hover {
+        background: #fef2f2;
+        color: var(--danger);
+      }
+
+      /* Stagger animations */
+      .task-item:nth-child(1) { animation-delay: 0.05s; }
+      .task-item:nth-child(2) { animation-delay: 0.1s; }
+      .task-item:nth-child(3) { animation-delay: 0.15s; }
+      .task-item:nth-child(4) { animation-delay: 0.2s; }
+      .task-item:nth-child(5) { animation-delay: 0.25s; }
+      .task-item:nth-child(n+6) { animation-delay: 0.3s; }
+
+      .empty-state {
+        text-align: center;
+        color: var(--text-secondary);
+        padding: 3rem 1rem;
+        font-size: 0.9375rem;
       }
     </style>
   </head>
   <body>
+    <!-- Main Application Container -->
     <div class="main">
-      <h2>Welcome to the TODO APP</h2>
-      <div class="input">
-        <input type="text" id="input" />
-        <button id="add">Add</button>
-        <button onclick="fetchTasks()">Refresh</button>
+      <h2>Todo Express</h2>
+
+      <!-- Input Section -->
+      <div class="input-container">
+        <input type="text" id="input" placeholder="What needs to be done?" />
+        <button id="add" class="btn-primary">Add</button>
+        <button onclick="fetchTasks()" class="btn-secondary">Refresh</button>
       </div>
+
+      <!-- Task List Container -->
       <div>
-        <ul id="tasks"></ul>
+        <ul id="tasks">
+          <!-- Tasks will be injected dynamically via JavaScript -->
+        </ul>
       </div>
     </div>
+
     <script>
+      // Get DOM elements
       const input = document.getElementById("input");
       const addButton = document.getElementById("add");
       const tasksList = document.getElementById("tasks");
-      const BASE_URL = "https://todo-express-nine.vercel.app/";
 
+      // API Base URL
+      const BASE_URL = location.origin + "/api/";
+
+      // Handle add button click
       addButton.onclick = () => {
-        const title = input.value;
-        addTask(title);
+        const title = input.value.trim();
+        if (title) {
+          addTask(title);
+          input.value = "";
+        }
       };
 
+      // Handle Enter key in input field
+      input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+          addButton.click();
+        }
+      });
+
+      // Fetch all tasks from the API and render them
       async function fetchTasks() {
-        const response = await fetch(BASE_URL);
-        const { data } = await response.json();
-        const tasks = data;
+        try {
+          const response = await fetch(BASE_URL);
+          const { data } = await response.json();
+          const tasks = data;
 
-        tasksList.innerHTML = "";
+          tasksList.innerHTML = "";
 
-        tasks.forEach((task) => {
-          const li = document.createElement("li");
-          li.innerHTML = `
-                      <li>
-                          <span>${task.title}</span>
-                          <span>${task.completed ? "✔" : "❌"}</span>
-                          <button onclick="updateTask(${task.id})">Update</button>
-                          <button onclick="deleteTask(${task.id})">Delete</button>
-                      </li>`;
-          tasksList.appendChild(li);
-        });
+          if (!tasks || tasks.length === 0) {
+            tasksList.innerHTML = '<div class="empty-state">No tasks yet. Add one above!</div>';
+            return;
+          }
+
+          tasks.forEach((task) => {
+            const li = document.createElement("li");
+            li.className = "task-item";
+
+            const isCompleted = task.completed;
+            const statusClass = isCompleted ? "status-completed" : "status-pending";
+            const statusIcon = isCompleted ? "✔ Done" : "⏳ Pending";
+
+            li.innerHTML = `
+                <div class="task-content">
+                    <span class="task-title" style="${isCompleted ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${task.title}</span>
+                    <span class="status-badge ${statusClass}">${statusIcon}</span>
+                </div>
+                <div class="task-actions">
+                    <button class="btn-icon btn-update" onclick="updateTask('${task._id}')">Toggle</button>
+                    <button class="btn-icon btn-delete" onclick="deleteTask('${task._id}')">Delete</button>
+                </div>`;
+            tasksList.appendChild(li);
+          });
+        } catch (error) {
+          console.error("Error fetching tasks:", error);
+          tasksList.innerHTML = '<div class="empty-state" style="color: var(--danger);">Failed to load tasks.</div>';
+        }
       }
 
+      // Add a new task via API
       async function addTask(title) {
-        const response = await fetch(BASE_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ title }),
-        });
-        fetchTasks();
+        try {
+          await fetch(BASE_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title }),
+          });
+          fetchTasks();
+        } catch (error) {
+          console.error("Error adding task:", error);
+        }
       }
 
+      // Delete a task by its ID
       async function deleteTask(id) {
-        const response = await fetch(BASE_URL + id, {
-          method: "DELETE",
-        });
-        fetchTasks();
+        try {
+          await fetch(BASE_URL + id, {
+            method: "DELETE",
+          });
+          fetchTasks();
+        } catch (error) {
+          console.error("Error deleting task:", error);
+        }
       }
 
+      // Toggle a task's completion status
       async function updateTask(id) {
-        const response = await fetch(BASE_URL + id, {
-          method: "PATCH",
-        });
-        fetchTasks();
+        try {
+          await fetch(BASE_URL + id, {
+            method: "PATCH",
+          });
+          fetchTasks();
+        } catch (error) {
+          console.error("Error updating task:", error);
+        }
       }
+
+      // Initial fetch to load tasks when page loads
+      fetchTasks();
     </script>
   </body>
 </html>

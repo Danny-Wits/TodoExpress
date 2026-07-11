@@ -1,45 +1,45 @@
+require("dotenv").config();
 const express = require("express");
+const mongoose = require("mongoose");
+const Task = require("./tasks");
 const app = express();
-const PORT = 3000;
-const tasks = [];
-let nextIndex = 1;
-app.use(express.json());
-
-app.get('/frontend', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+const PORT = 3001;
+// const tasks = [];
+// let nextIndex = 1;
+mongoose.connect(process.env.DB_STRING, {
+  dbName: "todo",
+}).then(() => {
+  console.log("Connected to MongoDB");
+}).catch((err) => {
+  console.error("Failed to connect to MongoDB", err);
 });
-app.get("/", (req, res) => {
+
+app.use(express.json());
+app.use(express.static(__dirname + '/public'));
+
+app.get("/api", async (req, res) => {
+  const tasks = await Task.find().sort({ completed: 1, createdAt: -1 });
   res.json({success: true, data: tasks});
 });
 
-app.post("/", (req, res) => {
+app.post("/api", async (req, res) => {
   const title = req.body.title;
-  const task = { id: nextIndex++, title, completed: false };
-  tasks.push(task);
-  console.log(tasks);
-  res.json({ success: true, data: task });
+  const task = {title};
+  const createdTask =await Task.create(task);
+  res.json({ success: true, data: createdTask });
 });
 
-app.patch("/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const task = tasks.find(e => e.id === id);
-
-  if(!task) {
-    return res.json({ success: false, message: "Task not found" });
-  }
-  task.completed = !task.completed;
+app.patch("/api/:id", async(req, res) => {
+  const id = req.params.id;
+  const task = await Task.updateOne({ _id: id }, [{ $set: { completed: { $not: "$completed" } } }], { new: true, updatePipeline: true });
   res.json({ success: true, data: task });
 })
 
-app.delete('/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const index = tasks.findIndex(e => e.id === id);
-  if(index === -1) {
-    return res.json({ success: false, message: "Task not found" });
-  }
-  const task = tasks.splice(index, 1);
+app.delete('/api/:id', async (req, res) => {
+  const id = req.params.id;
+  const task = await Task.deleteOne({ _id: id });
   res.json({ success: true, data: task });
-} )
+})
 
 app.listen(PORT, () => {
   console.log(`servers stated on port ${PORT}`);
