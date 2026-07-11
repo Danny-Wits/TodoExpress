@@ -4,9 +4,14 @@ const mongoose = require("mongoose");
 const Task = require("./tasks");
 const app = express();
 const PORT = 3001;
+const dbString = process.env.DB_STRING;
+if(!dbString) {
+  console.error("DB_STRING not set");
+  process.exit(1);
+}
 // const tasks = [];
 // let nextIndex = 1;
-mongoose.connect(process.env.DB_STRING, {
+mongoose.connect(dbString, {
   dbName: "todo",
 }).then(() => {
   console.log("Connected to MongoDB");
