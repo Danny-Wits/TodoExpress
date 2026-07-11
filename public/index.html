@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tasks</title>
+    <style>
+      * {
+        padding: 0px;
+        margin: 0px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      button {
+        border: none;
+        outline: none;
+        padding: 5px 10px;
+        color: white;
+        background-color: black;
+        border-radius: 4px;
+        box-shadow: 2px 2px 2px red;
+        &:hover {
+          box-shadow: 2px 2px 2px lime;
+        }
+      }
+      input {
+        border: none;
+        outline: none;
+        border: 1px dotted;
+        padding: 10px 2px;
+      }
+      .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <h2>Welcome to the TODO APP</h2>
+      <div class="input">
+        <input type="text" id="input" />
+        <button id="add">Add</button>
+        <button onclick="fetchTasks()">Refresh</button>
+      </div>
+      <div>
+        <ul id="tasks"></ul>
+      </div>
+    </div>
+    <script>
+      const input = document.getElementById("input");
+      const addButton = document.getElementById("add");
+      const tasksList = document.getElementById("tasks");
+      const BASE_URL = "http://localhost:3000/";
+
+      addButton.onclick = () => {
+        const title = input.value;
+        addTask(title);
+      };
+
+      async function fetchTasks() {
+        const response = await fetch(BASE_URL);
+        const { data } = await response.json();
+        const tasks = data;
+
+        tasksList.innerHTML = "";
+
+        tasks.forEach((task) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+                      <li>
+                          <span>${task.title}</span>
+                          <span>${task.completed ? "✔" : "❌"}</span>
+                          <button onclick="updateTask(${task.id})">Update</button>
+                          <button onclick="deleteTask(${task.id})">Delete</button>
+                      </li>`;
+          tasksList.appendChild(li);
+        });
+      }
+
+      async function addTask(title) {
+        const response = await fetch(BASE_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title }),
+        });
+        fetchTasks();
+      }
+
+      async function deleteTask(id) {
+        const response = await fetch(BASE_URL + id, {
+          method: "DELETE",
+        });
+        fetchTasks();
+      }
+
+      async function updateTask(id) {
+        const response = await fetch(BASE_URL + id, {
+          method: "PATCH",
+        });
+        fetchTasks();
+      }
+    </script>
+  </body>
+</html>
