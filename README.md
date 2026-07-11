@@ -14,7 +14,7 @@ A minimal, clean, and elegant Todo application built with a vanilla JavaScript f
 
 - **Frontend**: HTML5, Vanilla JavaScript, CSS3
 - **Backend**: Node.js, Express.js
-- **Database**: In-memory array (for demonstration purposes)
+- **Database**: Mongo with Mongoose
 
 ## Getting Started
 
