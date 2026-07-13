@@ -53,7 +53,7 @@
       const input = document.getElementById("input");
       const addButton = document.getElementById("add");
       const tasksList = document.getElementById("tasks");
-      const BASE_URL = "https://todo-express-nine.vercel.app/";
+      const BASE_URL = location.origin + "/api/";
 
       addButton.onclick = () => {
         const title = input.value;
@@ -73,8 +73,8 @@
                       <li>
                           <span>${task.title}</span>
                           <span>${task.completed ? "✔" : "❌"}</span>
-                          <button onclick="updateTask(${task.id})">Update</button>
-                          <button onclick="deleteTask(${task.id})">Delete</button>
+                          <button onclick="updateTask('${task._id}')">Update</button>
+                          <button onclick="deleteTask('${task._id}')">Delete</button>
                       </li>`;
           tasksList.appendChild(li);
         });
@@ -95,6 +95,7 @@
         const response = await fetch(BASE_URL + id, {
           method: "DELETE",
         });
+        console.log(BASE_URL + id);
         fetchTasks();
       }
 
@@ -104,6 +105,8 @@
         });
         fetchTasks();
       }
+
+      fetchTasks();
     </script>
   </body>
 </html>
