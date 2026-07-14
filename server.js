@@ -5,8 +5,8 @@ const mongoose = require("mongoose");
 const taskRoutes = require('./routes/taskroutes');
 
 mongoose.connect(process.env.DB_STRING,{dbName:'todo'}).then(() => {
-  console.log("Connnect to MongoDB")
-}).catch(err=>console.err(err));
+  console.log("Connected to MongoDB")
+}).catch(err=>console.error(err));
 
 const app = express();
 const PORT = 3000;
@@ -18,5 +18,5 @@ app.get('/', (req, res) => {
 app.use('/api', taskRoutes);
 
 app.listen(PORT, () => {
-  console.log(`servers stated on port ${PORT}`);
+  console.log(`Server started on port ${PORT}`);
 });
